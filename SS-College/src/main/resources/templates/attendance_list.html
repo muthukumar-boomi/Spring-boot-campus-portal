@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS College - Attendance Records</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+              font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh;
+            /* Background image added */
+            background-image: url('../img/list1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* subtle pattern overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.03'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40z'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* main card – glassmorphic effect */
+        .attendance-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            box-shadow: 0 30px 60px -10px rgba(0,20,40,0.3), 0 10px 25px -8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.5);
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: none;
+        }
+        .card-header-custom h3 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-header-custom h3 i {
+            font-size: 2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 50%;
+        }
+        .btn-add {
+            background: white;
+            color: #1e3c72;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        .btn-add:hover {
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: #0f2b4f;
+        }
+
+        /* table styling */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .table thead th {
+            background: #f8fafd;
+            color: #1e3c72;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid #dbeafe;
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .table thead th i {
+            margin-right: 6px;
+            color: #3b82f6;
+            font-size: 1rem;
+        }
+        .table tbody td {
+            vertical-align: middle;
+            padding: 1rem 0.75rem;
+            background-color: white;
+            border-bottom: 1px solid #eef2f6;
+            font-size: 0.95rem;
+        }
+        .table tbody tr:hover td {
+            background-color: #f5f9ff;
+        }
+
+        /* badges */
+        .badge-present, .badge-absent, .badge-late, .badge-holiday {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .badge-present {
+            background: linear-gradient(145deg, #28a745, #20c997);
+            color: white;
+        }
+        .badge-absent {
+            background: linear-gradient(145deg, #dc3545, #e4606d);
+            color: white;
+        }
+        .badge-late {
+            background: linear-gradient(145deg, #ffc107, #fd7e14);
+            color: #212529;
+        }
+        .badge-holiday {
+            background: linear-gradient(145deg, #6c757d, #868e96);
+            color: white;
+        }
+
+        /* action buttons */
+        .btn-group-sm .btn-outline-primary,
+        .btn-group-sm .btn-outline-danger {
+            border-width: 2px;
+            border-radius: 30px;
+            padding: 6px 12px;
+            transition: all 0.2s;
+        }
+        .btn-outline-primary {
+            border-color: #2a5298;
+            color: #2a5298;
+        }
+        .btn-outline-primary:hover {
+            background: #2a5298;
+            color: white;
+        }
+        .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .btn-outline-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c7a8a;
+        }
+        .empty-state i {
+            font-size: 3.5rem;
+            color: #a0b3cc;
+            margin-bottom: 1rem;
+        }
+
+        /* footer */
+        .card-footer-custom {
+            background: #f8fafd;
+            padding: 1rem 1.8rem;
+            color: #4b5565;
+            border-top: 1px solid #dbeafe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* responsive mobile */
+        @media (max-width: 768px) {
+            .table thead {
+                display: none;
+            }
+            .table tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: 10px;
+                padding: 10px;
+            }
+            .table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 10px;
+                border: none;
+                border-bottom: 1px solid #eee;
+            }
+            .table tbody td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #2a5298;
+                width: 40%;
+            }
+            .close-btn {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Close Button -->
+   <button class="close-btn" onclick="window.location.href='/mainpage'" title="Close">
+        <i class="fas fa-times"></i>
+    </button>
+
+    <div class="container">
+        <div class="attendance-card">
+            <!-- HEADER -->
+            <div class="card-header-custom">
+                <h3><i class="fas fa-calendar-check"></i> Attendance Records</h3>
+                <a th:href="@{/attendance}" class="btn-add">
+                    <i class="fas fa-plus-circle"></i> Mark Attendance
+                </a>
+            </div>
+
+            <!-- MESSAGE AREA -->
+            <div class="px-4 pt-4">
+                <div th:if="${msg}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i> <span th:text="${msg}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${err}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${err}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th> NO</th>
+                            <th> Roll Number</th>
+                            <th> Student Name</th>
+                            <th> Date</th>
+                            <th> Gender</th>
+                            <th> Course</th>
+                            <th> Section</th>
+                            <th> Status</th>
+                            <th> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="att, stat : ${attendances}">
+                            <td data-label="#" th:text="${stat.count}">1</td>
+                            <td data-label="Roll Number" th:text="${att.rnumber}">R001</td>
+                            <td data-label="Student Name" th:text="${att.name}">John Doe</td>
+                            <td data-label="Date" th:text="${att.date}">2026-02-12</td>
+                            <td data-label="Gender" th:text="${att.gender}">Male</td>
+                            <td data-label="Course" th:text="${att.course}">B.E.</td>
+                            <td data-label="Section" th:text="${att.section}">A</td>
+                            <td data-label="Status">
+                                <span th:if="${att.status == 'Present'}" class="badge-present">
+                                    <i class="fas fa-check-circle"></i> Present
+                                </span>
+                                <span th:if="${att.status == 'Absent'}" class="badge-absent">
+                                    <i class="fas fa-times-circle"></i> Absent
+                                </span>
+                                <span th:if="${att.status == 'Late'}" class="badge-late">
+                                    <i class="fas fa-clock"></i> Late
+                                </span>
+                                <span th:if="${att.status == 'Holiday'}" class="badge-holiday">
+                                    <i class="fas fa-umbrella-beach"></i> Holiday
+                                </span>
+                                <span th:if="${att.status != 'Present' and att.status != 'Absent' and att.status != 'Late' and att.status != 'Holiday'}" 
+                                      class="badge-secondary" th:text="${att.status}">Other</span>
+                            </td>
+                            <td data-label="Actions">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/attendance/edit/{rnumber}(rnumber=${att.rnumber})}" 
+                                       class="btn btn-outline-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <!-- Delete link without confirmation popup -->
+                                    <a th:href="@{/attendance/delete/{rnumber}(rnumber=${att.rnumber})}" 
+                                       class="btn btn-outline-danger" 
+                                       title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(attendances)}">
+                            <td colspan="9" class="empty-state">
+                                <i class="fas fa-inbox"></i><br>
+                                No attendance records found.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="card-footer-custom">
+                <i class="fas fa-clock" style="color: #3b82f6;"></i> Last updated: 
+                <span th:text="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm')}"></span>
+            </div>
+        </div> <!-- end attendance-card -->
+    </div> <!-- end container -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(alert => {
+                bootstrap.Alert.getOrCreateInstance(alert).close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

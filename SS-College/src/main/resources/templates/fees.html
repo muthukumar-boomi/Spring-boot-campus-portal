@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS Campus - Fees Management</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh;
+            background-image: url('../img/fees.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            box-shadow: 0 30px 60px -10px rgba(0,20,40,0.3), 0 10px 25px -8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.5);
+            overflow: hidden;
+            padding: 30px 35px;
+        }
+
+        .form-title {
+            color: #1e3c72;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+        .form-title i {
+            background: linear-gradient(145deg, #2563eb, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 50px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0 25px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .success {
+            background: #dff0d8;
+            color: #2e6b2e;
+            border-left: 6px solid #2ecc71;
+        }
+        .error {
+            background: #f8d7da;
+            color: #a93226;
+            border-left: 6px solid #e74c3c;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px 30px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            letter-spacing: 0.3px;
+            width: 100%;
+        }
+        label i {
+            width: 22px;
+            color: #3b82f6;
+            font-size: 1.1rem;
+        }
+
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            background-color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        input:focus, select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 6px 14px rgba(59,130,246,0.2);
+            outline: none;
+            background-color: #fafcff;
+        }
+        ::placeholder {
+            color: #94a3b8;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 6px 14px rgba(0,55,100,0.2);
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #1e3c72, #2a5298);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #143157, #1e3f72);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -8px #1e3c72;
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #1e293b;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-3px);
+        }
+        .btn-home {
+            background: #cbd5e1;
+            color: #1e293b;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        }
+        .btn-home:hover {
+            background: #b0bec5;
+            transform: translateY(-3px);
+        }
+
+        .loader {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 0.6s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 700px) {
+            .form-card { padding: 25px 20px; }
+            .form-grid { grid-template-columns: 1fr; gap: 20px; }
+            .btn-container { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="form-card">
+        <h1 class="form-title"><i class="fas fa-credit-card"></i> New Fees Page</h1>
+
+        <div th:if="${msg}" class="message success">
+            <i class="fas fa-check-circle"></i> <span th:text="${msg}"></span>
+        </div>
+        <div th:if="${err}" class="message error">
+            <i class="fas fa-exclamation-triangle"></i> <span th:text="${err}"></span>
+        </div>
+
+        <div style="height: 10px;"></div>
+
+        <form th:action="@{/fees}" method="post" id="feesForm">
+            <div class="form-grid">
+                <!-- Student ID -->
+                <div class="form-group">
+                    <label for="id" class="required"><i class="fas fa-id-card"></i> Student ID (auto)</label>
+                    <input type="text" id="id" name="id" required placeholder="Enter Register Student ID ">
+                    <div id="loaderMsg" style="font-size: 12px; text-align: center; margin-top: 5px;"></div>
+                </div>
+
+                <!-- Student Name (auto-filled) -->
+                <div class="form-group">
+                    <label for="name" class="required"><i class="fas fa-user-graduate"></i> Student Name (auto)</label>
+                    <input type="text" id="name" name="name" required placeholder="Auto-filled">
+                </div>
+
+                <!-- Fee Type -->
+                <div class="form-group">
+                    <label for="ftype" class="required"><i class="fas fa-tags"></i> Fees Type</label>
+                    <select id="ftype" name="ftype" required>
+                        <option value="" disabled selected>— Select fees type —</option>
+                        <option value="Tuition">Tuition Fees</option>
+                        <option value="Admission">Admission Fee</option>
+                        <option value="Exam">Examination Fee</option>
+                        <option value="Library">Library Fee</option>
+                        <option value="Transport">Transport Fee</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Due Date -->
+                <div class="form-group">
+                    <label for="ddate" class="required"><i class="fas fa-calendar-alt"></i> Due Date</label>
+                    <input type="date" id="ddate" name="ddate" required>
+                </div>
+
+                <!-- Total Amount -->
+                <div class="form-group">
+                    <label for="rs" class="required"><i class="fas fa-money-bill-wave"></i> Total Amount (₹)</label>
+                    <input type="number" id="rs" name="rs" step="1" min="0" required placeholder="e.g. 5000" oninput="calculateStatus()">
+                </div>
+
+                <!-- Payment Date -->
+                <div class="form-group">
+                    <label for="pdate"><i class="fas fa-calendar-check"></i> Payment Date</label>
+                    <input type="date" id="pdate" name="pdate" onchange="calculateStatus()">
+                </div>
+
+                <!-- Payment Mode -->
+                <div class="form-group">
+                    <label for="pmode"><i class="fas fa-credit-card"></i> Payment Mode</label>
+                    <select id="pmode" name="pmode">
+                        <option value="" disabled selected>— Select mode —</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Online">Online Transfer</option>
+                        <option value="Card">Credit/Debit Card</option>
+                    </select>
+                </div>
+
+                <!-- Paid Amount -->
+                <div class="form-group">
+                    <label for="pamount"><i class="fas fa-hand-holding-usd"></i> Paid Amount (₹)</label>
+                    <input type="number" id="pamount" name="pamount" step="1" min="0" placeholder="e.g. 5000" oninput="calculateStatus()">
+                </div>
+
+                <!-- Status (auto-calculated, but user can override) -->
+                <div class="form-group">
+                    <label for="status" class="required"><i class="fas fa-info-circle"></i> Status</label>
+                    <select id="status" name="status" required>
+                        <option value="" disabled selected>— Auto-calculated —</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Partial">Partially Paid</option>
+                        
+                    </select>
+                    <small style="font-size: 0.7rem; color: #3b82f6; text-align: center;">Auto-calculated based on amounts & dates</small>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <a th:href="@{/#student-records}" class="btn btn-home">
+                    <i class="fas fa-home"></i> Close
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Record
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    <i class="fas fa-broom"></i> Clear
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Set default due date to one month from today
+    function setDefaultDueDate() {
+        if (!document.getElementById('ddate').value) {
+            let dueDate = new Date();
+            dueDate.setMonth(dueDate.getMonth() + 1);
+            document.getElementById('ddate').value = dueDate.toISOString().split('T')[0];
+        }
+    }
+
+    // Auto-calculate status based on total amount, paid amount, due date, and payment date
+    function calculateStatus() {
+        const total = parseFloat(document.getElementById('rs').value) || 0;
+        const paid = parseFloat(document.getElementById('pamount').value) || 0;
+        const dueDateStr = document.getElementById('ddate').value;
+        const paymentDateStr = document.getElementById('pdate').value;
+        const today = new Date().toISOString().split('T')[0];
+        
+        let status = '';
+        
+        if (total === 0) {
+            status = 'Pending';
+        } else if (paid >= total) {
+            status = 'Paid';
+        } else if (paid > 0 && paid < total) {
+            status = 'Partial';
+        } else if (paid === 0) {
+            // Check if due date has passed
+            if (dueDateStr && dueDateStr < today) {
+                status = 'Overdue';
+            } else {
+                status = 'Pending';
+            }
+        }
+        
+        // If payment date is provided and status is not already Paid, consider as Partial or Pending
+        if (paymentDateStr && status !== 'Paid' && paid > 0) {
+            status = 'Partial';
+        }
+        
+        // Update dropdown
+        const statusSelect = document.getElementById('status');
+        for (let i = 0; i < statusSelect.options.length; i++) {
+            if (statusSelect.options[i].value === status) {
+                statusSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
+
+    // Reset form
+    function resetForm() {
+        document.getElementById('feesForm').reset();
+        setDefaultDueDate();
+        document.getElementById('loaderMsg').innerHTML = '';
+        calculateStatus(); // recalc status after reset
+    }
+
+    // Auto-fill student name from admission by Student ID
+    const studentIdInput = document.getElementById('id');
+    const nameInput = document.getElementById('name');
+    const loaderDiv = document.getElementById('loaderMsg');
+
+    studentIdInput.addEventListener('blur', function() {
+        const studentId = this.value.trim();
+        if (studentId === '') {
+            nameInput.value = '';
+            loaderDiv.innerHTML = '';
+            return;
+        }
+
+        loaderDiv.innerHTML = '<span class="loader"></span> Fetching student name...';
+
+        fetch(`/getStudentNameById?id=${encodeURIComponent(studentId)}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Student not found');
+                return response.json();
+            })
+            .then(data => {
+                loaderDiv.innerHTML = '';
+                if (data.name) nameInput.value = data.name;
+                else nameInput.value = '';
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                loaderDiv.innerHTML = '<span style="color:red;">❌ No student found with this ID</span>';
+                nameInput.value = '';
+            });
+    });
+
+    // Add event listeners for status calculation
+    document.getElementById('rs').addEventListener('input', calculateStatus);
+    document.getElementById('pamount').addEventListener('input', calculateStatus);
+    document.getElementById('ddate').addEventListener('change', calculateStatus);
+    document.getElementById('pdate').addEventListener('change', calculateStatus);
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        setDefaultDueDate();
+        calculateStatus();
+    });
+</script>
+</body>
+</html>

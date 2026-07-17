@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS Campus - University</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Raleway', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+        }
+        img {
+            max-width: 100%;
+        }
+        /* ===== UTILITIES ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-title h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e1e1e;
+            margin-bottom: 15px;
+        }
+        .section-title p {
+            font-size: 16px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .spad {
+            padding: 80px 0;
+        }
+        .text-white {
+            color: #fff;
+        }
+        .btn {
+            display: inline-block;
+            background: #d82a4e;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn:hover {
+            background: #b81e3e;
+        }
+        /* ===== HEADER ===== */
+        .header-section {
+            background: #fff;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+        .header-section .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .site-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #d82a4e;
+        }
+        .site-logo span {
+            color: #333;
+        }
+        .nav-switch {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .main-menu ul {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .main-menu ul li a {
+            font-weight: 600;
+            color: #333;
+            transition: color 0.3s;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+        .main-menu ul li a:hover,
+        .main-menu ul li a.active {
+            color: #d82a4e;
+            border-bottom-color: #d82a4e;
+        }
+        .header-btn {
+            background: #d82a4e;
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-left: 20px;
+        }
+        /* ===== HERO ===== */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            padding: 120px 0;
+            text-align: center;
+            color: #fff;
+        }
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('../img/hero.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        .hero-text p {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            color: #ddd;
+        }
+        .hero-buttons .btn:first-child {
+            margin-right: 15px;
+            background: #fff;
+            color: #d82a4e;
+        }
+        .hero-buttons .btn:first-child:hover {
+            background: #f0f0f0;
+        }
+        /* ===== QUICK LINKS / SERVICES ===== */
+        .services-section {
+            position: relative;
+            overflow: hidden;
+        }
+        .services-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('../img/service.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .service-card {
+            background: #f8fafc;
+            padding: 30px 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: #d82a4e;
+        }
+        .service-card i {
+            font-size: 40px;
+            color: #d82a4e;
+            margin-bottom: 20px;
+        }
+        .service-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .service-card p {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .service-link {
+            color: #d82a4e;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        /* ===== ABOUT SECTION (Student Records) ===== */
+        .about-section {
+            background: #f9f9f9;
+        }
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+        .about-image img {
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        /* ===== COURSES SECTION ===== */
+        .courses-section {
+            background: #fff;
+        }
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        .course-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .course-thumb {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        .course-info {
+            padding: 20px;
+            text-align: center;
+        }
+        .course-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #d82a4e;
+            margin: 0;
+        }
+        /* ===== TESTIMONIALS (About Us) - Added background color ===== */
+        .testimonials-section {
+            background: #ffe9ec; /* Light pink background */
+            color: #333;
+            padding: 80px 0;
+        }
+        .testimonials-section .section-title h2,
+        .testimonials-section .section-title p {
+            color: #333;
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            align-items: center;
+        }
+        .testimonial-card {
+            background: #fff;
+            padding: 30px 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            color: #333;
+        }
+        .testimonial-card i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #d82a4e;
+        }
+        .testimonial-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .testimonial-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .testimonial-card .service-link {
+            color: #d82a4e;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .staff-image-card {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+        .staff-image-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #d82a4e;
+            margin-bottom: 15px;
+        }
+        .staff-image-card h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .staff-image-card p {
+            font-size: 14px;
+            color: #666;
+        }
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        .cta-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('../img/footer.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+        .cta-section h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .cta-section .btn {
+            font-size: 16px;
+            padding: 15px 40px;
+        }
+        /* ===== FOOTER ===== */
+        .footer-section {
+            background: transparent;
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+        }
+        .footer-bottom {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+        .footer-bottom i {
+            color: #b58a6d;
+        }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .nav-switch {
+                display: block;
+            }
+            .main-menu {
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                display: none;
+            }
+            .main-menu.show {
+                display: block;
+            }
+            .main-menu ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .header-btn {
+                display: none;
+            }
+            .hero-text h1 {
+                font-size: 36px;
+            }
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 576px) {
+            .hero-buttons .btn {
+                display: block;
+                width: 80%;
+                margin: 10px auto;
+            }
+            .hero-buttons .btn:first-child {
+                margin-right: auto;
+            }
+        }
+        /* ===== PRELOADER ===== */
+        #preloder {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #d82a4e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header-section">
+        <div class="container">
+            <div class="site-logo">SS<span>Campus</span></div>
+            <div class="nav-switch"><i class="fa fa-bars"></i></div>
+            <nav class="main-menu">
+                <ul>
+                    <li><a data-target="home" class="active">Home</a></li>
+                    <br>
+                    <li><a data-target="academics">Academics</a></li>
+                    <li><a data-target="student-records">Student Records</a></li>
+                    <li><a data-target="about-us">About Us</a></li>
+                    <br>
+                    <li><a data-target="cta">View Records</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+        <div class="container">
+            <div class="hero-text">
+                <h1>Shape Your Future with Quality Education</h1>
+                <div class="hero-buttons">
+                    <a href="#" class="btn" onclick="showPage('courses'); return false;">Explore Courses</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academics Page -->
+    <section class="services-section spad" id="academics">
+        <div class="container">
+            <div class="section-title">
+                <h2>Academic Services</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-scroll"></i>
+                    <h3>Academic Record</h3>
+                    <p>View your grades, and request official records.</p>
+                    <a href="academic_record" class="service-link"> →</a>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-tasks"></i>
+                    <h3>Assessment</h3>
+                    <p>Check assessment schedules, results.</p>
+                    <a href="assessment" class="service-link"> →</a>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-pencil-alt"></i>
+                    <h3>Exam</h3>
+                    <p>Exam timetables, and results published here.</p>
+                    <a href="exam_result" class="service-link"> →</a>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Timetable</h3>
+                    <p>Class schedules, important dates.</p>
+                    <a href="timetable" class="service-link"> →</a>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-user-check"></i>
+                    <h3>Attendance</h3>
+                    <p>Track your attendance records and notify absences.</p>
+                    <a href="attendance" class="service-link"> →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Records Page -->
+    <section class="about-section spad" id="student-records">
+        <div class="container">
+            <h2>Student Services</h2>
+            <div class="about-content">
+                <div class="service-card">
+                    <i class="fas fa-door-open"></i>
+                    <h3>Admission</h3>
+                    <p>Apply online, check eligibility.</p>
+                    <a href="admission" class="service-link"> →</a>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-credit-card"></i>
+                    <h3>Fees</h3>
+                    <p>Pay tuition fees online, view fee structure, and download receipts.</p>
+                    <a href="fees" class="service-link"> →</a>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=400&fit=crop" alt="Campus">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- College Programs -->
+    <section class="courses-section spad" id="courses">
+        <div class="container">
+            <div class="section-title">
+                <h2>College Programs</h2>
+                <p>Explore our top engineering programs.</p>
+            </div>
+            <div class="courses-grid">
+                <div class="course-card">
+                    <div class="course-thumb" style="background-image: url('https://images.unsplash.com/photo-1544928147-79a2dbc1f389?w=400&h=200&fit=crop');"></div>
+                    <div class="course-info">
+                        <h3>CIVIL</h3>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-thumb" style="background-image: url('https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=400&h=200&fit=crop');"></div>
+                    <div class="course-info">
+                        <h3>MECH</h3>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-thumb" style="background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop');"></div>
+                    <div class="course-info">
+                        <h3>CSE</h3>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-thumb" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=200&fit=crop');"></div>
+                    <div class="course-info">
+                        <h3>ECE</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Page (with background color) -->
+    <section class="testimonials-section spad" id="about-us">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Us</h2>
+            </div>
+            <div class="testimonials-grid">
+                <!-- Staff Card -->
+                <div class="testimonial-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Staff</h3>
+                    <p>Meet our dedicated faculty and staff members.</p>
+                    <a href="staff_record" class="service-link" style="font-size: 20px;"> →</a>
+                </div>
+                
+                <!-- First Staff Image Card -->
+                <div class="staff-image-card">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Staff Member">
+                    <h4>Prof. Arjun Mehta</h4>
+                    <p>Head of MECH</p>
+                </div>
+                
+                <!-- Second Staff Image Card -->
+                <div class="staff-image-card">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Staff Member">
+                    <h4>Prof. Sunita Verma</h4>
+                    <p>Head of CSE</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section spad" id="cta">
+        <div class="container">
+            <h2>College staff can only view this</h2>
+            <a href="admin_login" class="btn">Academic Records</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-section">
+        <div class="footer-bottom">
+            &copy; 2026 SS Campus. All rights reserved. This is created by <i class="fas fa-heart" style="color: #228B22;"></i> Me.
+        </div>
+    </footer>
+
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            document.getElementById('preloder').style.display = 'none';
+        });
+
+        // Mobile menu toggle
+        document.querySelector('.nav-switch').addEventListener('click', function() {
+            document.querySelector('.main-menu').classList.toggle('show');
+        });
+
+        // Page navigation
+        const sections = {
+            home: ['hero', 'academics', 'student-records', 'courses', 'about-us', 'cta'],
+            academics: ['academics'],
+            'student-records': ['student-records'],
+            'about-us': ['about-us'],
+            'cta': ['cta'],
+            'courses': ['courses']   // Added this line to enable showing only the courses section
+        };
+
+        function showPage(target) {
+            const allSections = ['hero', 'academics', 'student-records', 'courses', 'about-us', 'cta'];
+            allSections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+
+            sections[target].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'block';
+            });
+
+            document.querySelectorAll('.main-menu ul li a').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.target === target) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        document.querySelectorAll('.main-menu ul li a[data-target]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.dataset.target;
+                showPage(target);
+            });
+        });
+
+        showPage('home');
+    </script>
+</body>
+</html>

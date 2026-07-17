@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS Campus - Admission Form</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font for heading -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh;
+            /* Background image added */
+            background-image: url('../img/admission.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        /* subtle overlay to keep text readable */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2); /* dark overlay */
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* main card – glassmorphic effect */
+        .form-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            box-shadow: 0 30px 60px -10px rgba(0,20,40,0.3), 0 10px 25px -8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.5);
+            overflow: hidden;
+            padding: 30px 35px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 0 0 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 50px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0 25px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .success {
+            background: #dff0d8;
+            color: #2e6b2e;
+            border-left: 6px solid #2ecc71;
+        }
+        .error {
+            background: #f8d7da;
+            color: #a93226;
+            border-left: 6px solid #e74c3c;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #1e3c72;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .form-group {
+            flex: 1 1 150px;
+            min-width: 150px;
+        }
+
+        /* Label styling - centered */
+        label {
+            display: flex;
+            align-items: center;
+            justify-content: center;   /* Centers the label content horizontally */
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+            width: 100%;                /* Takes full width of parent */
+        }
+        label i {
+            width: 22px;
+            color: #3b82f6;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            background-color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 6px 14px rgba(59,130,246,0.2);
+            outline: none;
+            background-color: #fafcff;
+        }
+        ::placeholder {
+            color: #94a3b8;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 6px 14px rgba(0,55,100,0.2);
+            text-decoration: none;
+        }
+        .submit-btn {
+            background: linear-gradient(145deg, #1e3c72, #2a5298);
+            color: white;
+        }
+        .submit-btn:hover {
+            background: linear-gradient(145deg, #143157, #1e3f72);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -8px #1e3c72;
+        }
+        .reset-btn {
+            background: #f1f5f9;
+            color: #1e293b;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        }
+        .reset-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-3px);
+        }
+        .home-btn {
+            background: #cbd5e1;
+            color: #1e293b;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        }
+        .home-btn:hover {
+            background: #b0bec5;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 700px) {
+            .form-card { padding: 25px 20px; }
+            .form-row { flex-direction: column; gap: 15px; }
+            .btn-container { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h1>New Admission Page</h1>
+            <br>
+
+            <div th:if="${msg}" class="message success">
+                <i class="fas fa-check-circle"></i> <span th:text="${msg}">Record saved</span>
+            </div>
+            <div th:if="${err}" class="message error">
+                <i class="fas fa-exclamation-triangle"></i> <span th:text="${err}">Error</span>
+            </div>
+
+            <div style="height: 10px;"></div>
+
+            <form th:action="@{/admission}" method="post" id="admissionForm">
+                <!-- Student Personal Details -->
+                <section class="form-section">
+                    <h2 class="section-title">Student Personal Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id" class="required"><i class="fas fa-id-card"></i> Student ID</label>
+                            <input type="text" id="id" name="id" required placeholder="e.g. STU101,STU102">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="name" class="required"><i class="fas fa-user"></i> First Name</label>
+                            <input type="text" id="name" name="name" required placeholder="e.x. John">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lname" class="required"><i class="fas fa-user"></i> Last Name</label>
+                            <input type="text" id="lname" name="lname" required placeholder="e.x. D">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dob" class="required"><i class="fas fa-calendar-day"></i> Date of Birth</label>
+                            <input type="date" id="dob" name="dob" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender" class="required"><i class="fas fa-venus-mars"></i> Gender</label>
+                            <select id="gender" name="gender" required>
+                                <option value="" disabled selected>— Select gender —</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="blood" class="required"><i class="fas fa-tint"></i> Blood Group</label>
+                            <select id="blood" name="blood" required>
+                                <option value="" disabled selected>— Select blood group —</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Contact Details -->
+                <section class="form-section">
+                    <h2 class="section-title">Contact Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email" class="required"><i class="fas fa-envelope"></i> Email Address</label>
+                            <input type="email" id="email" name="email" required placeholder="student@example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="mobile" class="required"><i class="fas fa-phone"></i> Mobile Number</label>
+                            <input type="tel" id="mobile" name="mobile" required placeholder="9876543210">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="address" class="required"><i class="fas fa-map-marker-alt"></i> Address</label>
+                            <textarea id="address" name="address" rows="3" required placeholder="House no., street, city, pincode"></textarea>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Academic Details -->
+                <section class="form-section">
+                    <h2 class="section-title">Academic Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="course" class="required"><i class="fas fa-book"></i> Course</label>
+                            <select id="course" name="course" required>
+                                <option value="" disabled selected>— Select course —</option>
+                                <option value="B.E. Computer Science">B.E. Computer Science</option>
+                                <option value="B.E. Electronics">B.E. Electronics</option>
+                                <option value="B.E. Mechanical">B.E. Mechanical</option>
+                                <option value="B.E. Civil">B.E. Civil</option>
+                                <option value="B.Com">B.Com</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dep" class="required"><i class="fas fa-university"></i> Department</label>
+                            <select id="dep" name="dep" required>
+                                <option value="" disabled selected>— Select department —</option>
+                                <option value="CSE">Computer Science (CSE)</option>
+                                <option value="ECE">Electronics (ECE)</option>
+                                <option value="MECH">Mechanical (MECH)</option>
+                                <option value="CIVIL">Civil (CIVIL)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ayear" class="required"><i class="fas fa-calendar-alt"></i> Academic Year</label>
+                            <input type="text" id="ayear" name="ayear" required placeholder="e.g. 2025-2026">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sem" class="required"><i class="fas fa-layer-group"></i> Semester</label>
+                            <select id="sem" name="sem" required>
+                                <option value="" disabled selected>— Select semester —</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="section" class="required"><i class="fas fa-users"></i> Section</label>
+                            <select id="section" name="section" required>
+                                <option value="" disabled selected>— Select section —</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rnumber" class="required"><i class="fas fa-hashtag"></i> Roll Number</label>
+                            <input type="text" id="rnumber" name="rnumber" required placeholder="e.x. 72032010401">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pcollege" class="required"><i class="fas fa-school"></i> Previous College</label>
+                            <input type="text" id="pcollege" name="pcollege" required placeholder="e.x. Hindusthan college">
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Admission Details -->
+                <section class="form-section">
+                    <h2 class="section-title">Admission Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date" class="required"><i class="fas fa-calendar-check"></i> Admission Date</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="atype" class="required"><i class="fas fa-tag"></i> Admission Type</label>
+                            <select id="atype" name="atype" required>
+                                <option value="" disabled selected>— Select type —</option>
+                                <option value="Regular">Regular</option>
+                                <option value="Lateral">Lateral Entry</option>
+                                <option value="Transfer">Transfer</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="accommodation" class="required"><i class="fas fa-home"></i> Accommodation</label>
+                            <select id="accommodation" name="accommodation" required>
+                                <option value="" disabled selected>— Select accommodation —</option>
+                                <option value="Day Scholar">Day Scholar</option>
+                                <option value="Hostel">Hostel</option>
+                                <option value="Transport">Transport</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Parent/Guardian Details -->
+                <section class="form-section">
+                    <h2 class="section-title">Parent Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fname" class="required"><i class="fas fa-male"></i> Father's Name</label>
+                            <input type="text" id="fname" name="fname" required placeholder="e.x. seeman">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="mname" class="required"><i class="fas fa-female"></i> Mother's Name</label>
+                            <input type="text" id="mname" name="mname" required placeholder="e.x. lakshmi">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ph" class="required"><i class="fas fa-phone-alt"></i> Parent's Phone</label>
+                            <input type="tel" id="ph" name="ph" required placeholder="9876543210">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="work" class="required"><i class="fas fa-briefcase"></i> Parent's Occupation</label>
+                            <input type="text" id="work" name="work" required placeholder="e.x. Teacher, Business">
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Submit Buttons + Home button -->
+                <div class="btn-container">
+                    <a th:href="@{/#student-records}" class="btn btn-home">
+                      <i class="fas fa-home"></i> Close
+                     </a>
+                    <button type="submit" class="btn submit-btn">
+                        <i class="fas fa-paper-plane"></i> Submit Admission
+                    </button>
+                    <button type="reset" class="btn reset-btn">
+                        <i class="fas fa-redo"></i> Clear
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            const maxDOB = new Date();
+            maxDOB.setFullYear(maxDOB.getFullYear() - 16);
+            document.getElementById('dob').max = maxDOB.toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>

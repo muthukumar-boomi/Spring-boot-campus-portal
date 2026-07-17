@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SS College - Edit Exam Result</title>
+     <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    min-height: 100vh;
+    /* Background image with absolute path */
+    background-image: url('/img/edit3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* Fallback color */
+    background-color: #f0f4ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+        }
+        /* subtle pattern overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.03'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40z'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .exam-card {
+            max-width: 950px;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            box-shadow: 0 30px 60px -10px rgba(0,20,40,0.3), 0 10px 25px -8px rgba(0,0,0,0.2);
+            padding: 35px 40px;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 0 0 10px 0;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3b82f6;
+        }
+        h1 i {
+            background: linear-gradient(145deg, #2563eb, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 50px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0 25px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .success {
+            background: #dff0d8;
+            color: #2e6b2e;
+            border-left: 6px solid #2ecc71;
+        }
+        .error {
+            background: #f8d7da;
+            color: #a93226;
+            border-left: 6px solid #e74c3c;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            letter-spacing: 0.3px;
+        }
+        label i {
+            width: 22px;
+            color: #3b82f6;          /* uniform icon color */
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            background-color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        input:focus, select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 6px 14px rgba(59,130,246,0.2);
+            outline: none;
+            background-color: #fafcff;
+        }
+        input[readonly] {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+        ::placeholder {
+            color: #94a3b8;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Grade calculator panel - REDUCED SIZE */
+        .grade-panel {
+            background: linear-gradient(120deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 28px;
+            padding: 18px 22px;
+            margin: 30px 0 20px;
+            border: 1px solid #dbeafe;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02), 0 8px 20px rgba(0,55,120,0.08);
+        }
+        .grade-panel h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .grade-panel h3 i {
+            color: #f97316;
+            font-size: 1.3rem;
+        }
+
+        .grade-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: white;
+            border-radius: 20px;
+            padding: 12px 16px;
+            flex: 1 1 130px;
+            text-align: center;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .percentage-value {
+            color: #2563eb;
+        }
+        .grade-value {
+            color: #0d9488;
+        }
+
+        /* Status selector - as interactive buttons (REDUCED SIZE) */
+        .status-group {
+            margin: 20px 0 15px;
+        }
+        .status-group label {
+            margin-bottom: 10px;
+        }
+        .status-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .status-btn {
+            flex: 1 1 110px;
+            padding: 10px 8px;
+            border-radius: 40px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #334155;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .status-btn i {
+            font-size: 1rem;
+        }
+        .status-btn.completed { border-color: #10b981; color: #065f46; }
+        .status-btn.completed.active { background: #10b981; color: white; border-color: #059669; }
+        .status-btn.pending { border-color: #f59e0b; color: #92400e; }
+        .status-btn.pending.active { background: #f59e0b; color: white; border-color: #d97706; }
+        .status-btn.absent { border-color: #ef4444; color: #991b1b; }
+        .status-btn.absent.active { background: #ef4444; color: white; border-color: #dc2626; }
+        .status-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 18px -6px rgba(0,0,0,0.15);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 16px 38px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 6px 14px rgba(0,55,100,0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #1e3c72, #2a5298);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #143157, #1e3f72);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -8px #1e3c72;
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #1e293b;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-3px);
+        }
+
+        /* Small responsive */
+        @media (max-width: 700px) {
+            .exam-card { padding: 25px 20px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .grade-stats { flex-direction: column; }
+            .status-buttons { flex-direction: column; }
+            .status-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="exam-card">
+        <h1><i class="fas fa-edit"></i> Edit Exam Results</h1>
+
+        <!-- Optional message area (can be used for update feedback) -->
+        <div th:if="${msg}" class="message success">
+            <i class="fas fa-check-circle"></i> <span th:text="${msg}">Record updated</span>
+        </div>
+        <div th:if="${err}" class="message error">
+            <i class="fas fa-exclamation-triangle"></i> <span th:text="${err}">Error</span>
+        </div>
+
+        <form th:action="@{/exam_result/update}" method="post" id="editExamForm">
+            <!-- Spacer before first row -->
+            <div style="height: 10px;"></div>
+
+            <div class="form-grid">
+                <!-- Exam ID (readonly) -->
+                <div class="form-group">
+                    <label for="id" class="required"><i class="fas fa-qrcode"></i> Exam ID</label>
+                    <input type="text" id="id" name="id" th:value="${exam.id}" readonly required>
+                </div>
+
+                <!-- Student Name -->
+                <div class="form-group">
+                    <label for="name" class="required"><i class="fas fa-user"></i> Student Name</label>
+                    <input type="text" id="name" name="name" th:value="${exam.name}" placeholder="Full name" required>
+                </div>
+
+                <!-- Exam Date -->
+                <div class="form-group">
+                    <label for="date" class="required"><i class="fas fa-calendar-alt"></i> Exam Date</label>
+                    <input type="date" id="date" name="date" th:value="${exam.date}" required>
+                </div>
+
+                <!-- Section -->
+                <div class="form-group">
+                    <label for="section" class="required"><i class="fas fa-layer-group"></i> Section</label>
+                    <select id="section" name="section" required>
+                        <option value="" disabled>— Select section —</option>
+                        <option value="A" th:selected="${exam.section == 'A'}">A</option>
+                        <option value="B" th:selected="${exam.section == 'B'}">B</option>
+                        <option value="C" th:selected="${exam.section == 'C'}">C</option>
+                        <option value="D" th:selected="${exam.section == 'D'}">D</option>
+                    </select>
+                </div>
+
+                <!-- Exam Type -->
+                <div class="form-group">
+                    <label for="etype" class="required"><i class="fas fa-clipboard-list"></i> Exam Type</label>
+                    <select id="etype" name="etype" required>
+                        <option value="" disabled>— Choose type —</option>
+                        <option value="Unit Test" th:selected="${exam.etype == 'Unit Test'}">Unit Test</option>
+                        <option value="Final Exam" th:selected="${exam.etype == 'Final Exam'}">Final Exam</option>
+                        <option value="Semester Exam" th:selected="${exam.etype == 'Semester Exam'}">Semester Exam</option>
+                        <option value="Practical" th:selected="${exam.etype == 'Practical'}">Practical</option>
+                        <option value="Assignment" th:selected="${exam.etype == 'Assignment'}">Assignment</option>
+                    </select>
+                </div>
+
+                <!-- Subject (college-level) -->
+                <div class="form-group">
+                    <label for="subject" class="required"><i class="fas fa-book-open"></i> Subject</label>
+                    <select id="subject" name="subject" required>
+                        <option value="" disabled>— Select subject —</option>
+                        <option value="Engineering Mathematics" th:selected="${exam.subject == 'Engineering Mathematics'}">Engineering Mathematics</option>
+                        <option value="Data Structures" th:selected="${exam.subject == 'Data Structures'}">Data Structures</option>
+                        <option value="Digital Electronics" th:selected="${exam.subject == 'Digital Electronics'}">Digital Electronics</option>
+                        <option value="Civil Engineering" th:selected="${exam.subject == 'Civil Engineering'}">Civil Engineering</option>
+                        <option value="Business Statistics" th:selected="${exam.subject == 'Business Statistics'}">Business Statistics</option>
+                        <option value="Computer Science" th:selected="${exam.subject == 'Computer Science'}">Computer Science</option>
+                        <option value="Marketing Management" th:selected="${exam.subject == 'Marketing Management'}">Marketing Management</option>
+                        <option value="Mechanical Engineering" th:selected="${exam.subject == 'Mechanical Engineering'}">Mechanical Engineering</option>
+                        <option value="Fluid Mechanics" th:selected="${exam.subject == 'Fluid Mechanics'}">Fluid Mechanics</option>
+                        <option value="Organic Chemistry" th:selected="${exam.subject == 'Organic Chemistry'}">Organic Chemistry</option>
+                    </select>
+                </div>
+
+                <!-- Time (optional) -->
+                <div class="form-group">
+                    <label for="time"><i class="fas fa-clock"></i> Time (optional)</label>
+                    <input type="time" id="time" name="time" th:value="${exam.time}" placeholder="HH:MM">
+                </div>
+
+                <!-- Total Marks -->
+                <div class="form-group">
+                    <label for="tmark" class="required"><i class="fas fa-arrow-up-wide-short"></i> Total Marks</label>
+                    <input type="number" id="tmark" name="tmark" step="1" min="0" th:value="${exam.tmark}" placeholder="e.g. 100" required oninput="calculateGrade()">
+                </div>
+
+                <!-- Obtained Marks -->
+                <div class="form-group">
+                    <label for="mark" class="required"><i class="fas fa-star"></i> Obtained Marks</label>
+                    <input type="number" id="mark" name="mark" step="1" min="0" th:value="${exam.mark}" placeholder="e.g. 85" required oninput="calculateGrade()">
+                </div>
+            </div> <!-- end grid -->
+
+            <!-- Grade Calculator Panel -->
+            <div class="grade-panel">
+                <h3><i class="fas fa-calculator"></i> Live Grade Calculator</h3>
+                <div class="grade-stats">
+                    <div class="stat-box">
+                        <div class="stat-label"><i class="fas fa-percent"></i> Percentage</div>
+                        <div class="stat-value percentage-value" id="percentageDisplay">
+                            <!-- Will be set by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label"><i class="fas fa-medal"></i> Grade</div>
+                        <div class="stat-value grade-value" id="gradeDisplay">
+                            <!-- Will be set by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Hidden grade field for backend -->
+                <input type="hidden" id="grade" name="grade" th:value="${exam.grade}">
+            </div>
+
+            <!-- Status Buttons (match exam.status) -->
+            <div class="status-group">
+                <label><i class="fas fa-flag-checkered"></i> Exam Status</label>
+                <div class="status-buttons">
+                    <div class="status-btn completed" data-status="Completed" onclick="setStatus('Completed')">
+                        <i class="fas fa-check-circle"></i> Completed
+                    </div>
+                    <div class="status-btn pending" data-status="Pending" onclick="setStatus('Pending')">
+                        <i class="fas fa-hourglass-half"></i> Pending
+                    </div>
+                    <div class="status-btn absent" data-status="Absent" onclick="setStatus('Absent')">
+                        <i class="fas fa-user-slash"></i> Absent
+                    </div>
+                </div>
+                <input type="hidden" id="status" name="status" th:value="${exam.status}">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-container">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Record</button>
+                <a th:href="@{/exam_results_list}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Initialize everything after DOM is loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            // Set active status button based on hidden field
+            const statusValue = document.getElementById('status').value;
+            if (statusValue) {
+                setStatus(statusValue);
+            }
+
+            // Pre-fill grade calculator with current marks
+            calculateGrade();
+        });
+
+        // Grade calculation (percentage + letter)
+        function calculateGrade() {
+            const total = parseFloat(document.getElementById('tmark').value) || 0;
+            const obtained = parseFloat(document.getElementById('mark').value) || 0;
+            let percent = 0, grade = '-';
+
+            if (total > 0 && obtained >= 0) {
+                percent = (obtained / total) * 100;
+                if (percent >= 90) grade = 'A+';
+                else if (percent >= 80) grade = 'A';
+                else if (percent >= 70) grade = 'B';
+                else if (percent >= 60) grade = 'C';
+                else if (percent >= 50) grade = 'D';
+                else if (percent >= 40) grade = 'E';
+                else grade = 'F';
+            }
+
+            document.getElementById('percentageDisplay').textContent = percent.toFixed(2) + '%';
+            document.getElementById('gradeDisplay').textContent = grade;
+            document.getElementById('grade').value = grade;
+        }
+
+        // Set active status button and hidden input
+        function setStatus(status) {
+            document.getElementById('status').value = status;
+            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                if (btn.dataset.status === status) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Ensure status is selected before submit
+        document.getElementById('editExamForm').addEventListener('submit', function(e) {
+            if (!document.getElementById('status').value) {
+                e.preventDefault();
+                alert('Please select an exam status.');
+            }
+        });
+
+        // Attach grade calculation to input events
+        document.getElementById('tmark').addEventListener('input', calculateGrade);
+        document.getElementById('mark').addEventListener('input', calculateGrade);
+    </script>
+</body>
+</html>

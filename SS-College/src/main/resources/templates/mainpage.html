@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS Campus - View Records</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('../img/footer.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Warm earthy overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(90, 70, 50, 0.35);
+            z-index: 0;
+        }
+
+        .center-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #2f3e2f;
+            text-align: center;
+            padding: 30px;
+            background: rgba(245, 235, 215, 0.3);
+            border-radius: 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 30px 60px rgba(50, 40, 20, 0.3);
+            border: 1px solid rgba(255, 250, 230, 0.3);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+            color: #1f4f1f;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #fff; /* Changed to white */
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Natural button styles */
+        .custom-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 28px;
+            margin: 12px 8px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #fefaf0;
+            box-shadow: 0 10px 20px rgba(60, 40, 20, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+            border: 1px solid rgba(255,255,240,0.1);
+            background-size: 200% auto;
+        }
+
+        .custom-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px rgba(60, 40, 20, 0.25);
+            background-position: right center;
+        }
+
+        .custom-button i {
+            font-size: 1.2rem;
+            color: #fefae0;
+            transition: transform 0.3s;
+        }
+
+        .custom-button:hover i {
+            transform: scale(1.2);
+        }
+
+        /* Individual earthy gradients */
+        .custom-button:nth-child(1) { background: linear-gradient(145deg, #7c9f7c, #4f6b4f); }
+        .custom-button:nth-child(2) { background: linear-gradient(145deg, #d4a373, #b5835a); }
+        .custom-button:nth-child(3) { background: linear-gradient(145deg, #b7b17a, #9c8e5a); }
+        .custom-button:nth-child(4) { background: linear-gradient(145deg, #b58a6d, #8b5e3c); }
+        .custom-button:nth-child(5) { background: linear-gradient(145deg, #8f6e4c, #6e4f33); }
+        /* Home button – neutral stone */
+        .custom-button:nth-child(6) { background: linear-gradient(145deg, #a0a0a0, #707070); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            .custom-button { padding: 12px 20px; font-size: 0.95rem; min-width: 140px; }
+            .center-content { padding: 20px; border-radius: 40px; }
+        }
+
+        @media (max-width: 576px) {
+            .custom-button { width: 100%; margin: 8px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="center-content">
+        <h1>SS Campus</h1>
+        <br><br>
+        <h2>View Records</h2>
+        <br>
+        <!-- First row: five buttons -->
+        <div class="d-flex flex-wrap justify-content-center">
+            <a th:href="@{/academic_records_list}" class="custom-button"><i class="fas fa-graduation-cap"></i> Academic</a>
+            <a th:href="@{/admission_list}" class="custom-button"><i class="fas fa-door-open"></i> Admission</a>
+            <a th:href="@{/attendance_list}" class="custom-button"><i class="fas fa-calendar-check"></i> Attendance</a>
+            <a th:href="@{/exam_results_list}" class="custom-button"><i class="fas fa-pencil-alt"></i> Exam Result</a>
+            <a th:href="@{/fees_list}" class="custom-button"><i class="fas fa-coins"></i> Fees</a>
+        </div>
+        <!-- Separated Home button with margin-top -->
+        <div class="mt-5">
+            <a th:href="@{/}" class="custom-button"><i class="fas fa-home"></i> Home</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+            crossorigin="anonymous"></script>
+</body>
+</html>

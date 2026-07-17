@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SS College - Edit Attendance</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh;
+            background-image: url('/img/edit2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #f0f4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239aa9b8' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        h1 i {
+            color: #3498db;
+            font-size: 28px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        label i {
+            color: #2a5298;
+            width: 20px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        input:focus, select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+            outline: none;
+            background-color: #fff;
+        }
+        input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #4a5056);
+        }
+        .message {
+            padding: 12px 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+        .error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .status-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .status-btn {
+            flex: 1 1 auto;
+            min-width: 100px;
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            border-radius: 40px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .status-btn:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .status-btn.present.active {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-color: transparent;
+        }
+        .status-btn.absent.active {
+            background: linear-gradient(135deg, #dc3545, #e4606d);
+            color: white;
+            border-color: transparent;
+        }
+        .status-btn.late.active {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: #212529;
+            border-color: transparent;
+        }
+        .status-btn.leave.active {
+            background: linear-gradient(135deg, #6c757d, #868e96);
+            color: white;
+            border-color: transparent;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        ::placeholder {
+            text-align: center;
+            color: #aaa;
+        }
+        select option {
+            text-align: center;
+        }
+        @media (max-width: 700px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .status-buttons {
+                flex-direction: column;
+            }
+            .status-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fas fa-edit"></i> Edit Attendance</h1>
+
+    <div th:if="${msg}" class="message success" th:text="${msg}"></div>
+    <div th:if="${err}" class="message error" th:text="${err}"></div>
+
+    <form th:action="@{/attendance/update}" method="post" id="editAttendanceForm">
+        <!-- Roll number (readonly) -->
+        <div class="form-group">
+            <label for="rnumber" class="required">
+                <i class="fas fa-id-card"></i> Roll Number
+            </label>
+            <input type="text" id="rnumber" name="rnumber" th:value="${attendance.rnumber}" readonly required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name" class="required">
+                    <i class="fas fa-user-graduate"></i> Student Name
+                </label>
+                <input type="text" id="name" name="name" th:value="${attendance.name}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="date" class="required">
+                    <i class="fas fa-calendar-day"></i> Date
+                </label>
+                <input type="date" id="date" name="date" th:value="${attendance.date}" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="gender" class="required">
+                    <i class="fas fa-venus-mars"></i> Gender
+                </label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male" th:selected="${attendance.gender == 'Male'}">Male</option>
+                    <option value="Female" th:selected="${attendance.gender == 'Female'}">Female</option>
+                    <option value="Other" th:selected="${attendance.gender == 'Other'}">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="course" class="required">
+                    <i class="fas fa-graduation-cap"></i> Course
+                </label>
+                <!-- ✅ Fixed: Course dropdown with correct pre-selection -->
+                <select id="course" name="course" required>
+                    <option value="">--- Select Course ---</option>
+                    <option value="B.E. Computer Science" th:selected="${attendance.course == 'B.E. Computer Science'}">B.E. Computer Science</option>
+                    <option value="B.E. Electronics" th:selected="${attendance.course == 'B.E. Electronics'}">B.E. Electronics</option>
+                    <option value="B.E. Mechanical" th:selected="${attendance.course == 'B.E. Mechanical'}">B.E. Mechanical</option>
+                    <option value="B.E. Civil" th:selected="${attendance.course == 'B.E. Civil'}">B.E. Civil</option>
+                    <option value="B.Com" th:selected="${attendance.course == 'B.Com'}">B.Com</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="section" class="required">
+                    <i class="fas fa-users"></i> Section
+                </label>
+                <select id="section" name="section" required>
+                    <option value="">Select Section</option>
+                    <option value="A" th:selected="${attendance.section == 'A'}">A</option>
+                    <option value="B" th:selected="${attendance.section == 'B'}">B</option>
+                    <option value="C" th:selected="${attendance.section == 'C'}">C</option>
+                    <option value="D" th:selected="${attendance.section == 'D'}">D</option>
+                </select>
+            </div>
+            <div class="form-group"></div>
+        </div>
+
+        <div class="form-group">
+            <label class="required">
+                <i class="fas fa-clipboard-check"></i> Attendance Status
+            </label>
+            <div class="status-buttons">
+                <div class="status-btn present" data-status="Present" onclick="selectStatus('Present')">
+                    <i class="fas fa-check-circle"></i> Present
+                </div>
+                <div class="status-btn absent" data-status="Absent" onclick="selectStatus('Absent')">
+                    <i class="fas fa-times-circle"></i> Absent
+                </div>
+                <div class="status-btn late" data-status="Late" onclick="selectStatus('Late')">
+                    <i class="fas fa-clock"></i> Late
+                </div>
+                <div class="status-btn leave" data-status="Leave" onclick="selectStatus('Leave')">
+                    <i class="fas fa-umbrella-beach"></i> Leave
+                </div>
+            </div>
+            <input type="hidden" id="status" name="status" th:value="${attendance.status}" required>
+        </div>
+
+        <div class="button-container">
+            <button type="submit" class="btn">
+                <i class="fas fa-save"></i> Update Record
+            </button>
+            <a th:href="@{/attendance_list}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function selectStatus(status) {
+        document.getElementById('status').value = status;
+        document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            if (btn.dataset.status === status) btn.classList.add('active');
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        const currentStatus = document.getElementById('status').value;
+        if (currentStatus) selectStatus(currentStatus);
+    });
+
+    document.getElementById('editAttendanceForm').addEventListener('submit', function(e) {
+        if (!document.getElementById('status').value) {
+            e.preventDefault();
+            alert('Please select attendance status');
+        }
+    });
+</script>
+</body>
+</html>

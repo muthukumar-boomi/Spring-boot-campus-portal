@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS College - Admissions</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh;
+            background-image: url('../img/list3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        .close-btn {
+            position: fixed; top: 20px; right: 20px;
+            background: rgba(0,0,0,0.7); color: white; border: none;
+            border-radius: 50%; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; cursor: pointer; z-index: 1001;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .close-btn:hover { background: rgba(0,0,0,0.9); transform: scale(1.1); }
+        body::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.03'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40z'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none; z-index: 0;
+        }
+        .container {
+            position: relative; z-index: 2; width: 100%; max-width: 1400px; margin: 0 auto;
+        }
+        .admissions-card {
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(4px);
+            border-radius: 32px; box-shadow: 0 30px 60px -10px rgba(0,20,40,0.3), 0 10px 25px -8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.5); overflow: hidden;
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, #1e3c72, #2a5298); color: white;
+            padding: 1.2rem 1.8rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .card-header-custom h3 {
+            margin: 0; font-weight: 600; font-size: 1.8rem; display: flex; align-items: center; gap: 12px;
+        }
+        .card-header-custom h3 i {
+            font-size: 2rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 50%;
+        }
+        .btn-add {
+            background: white; color: #1e3c72; border-radius: 50px; padding: 10px 25px;
+            font-weight: 600; display: flex; align-items: center; gap: 10px; transition: all 0.3s;
+            border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-decoration: none;
+        }
+        .btn-add:hover { background: #f0f4ff; transform: translateY(-2px); color: #0f2b4f; }
+
+        .table-responsive { overflow-x: auto; }
+        .table { margin-bottom: 0; min-width: 2200px; }
+        .table thead th {
+            background: #f8fafd; color: #1e3c72; font-weight: 600; font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dbeafe;
+            padding: 1rem 0.5rem; vertical-align: middle; white-space: nowrap;
+        }
+        .table thead th i { margin-right: 4px; color: #3b82f6; font-size: 0.9rem; }
+        .table tbody td {
+            vertical-align: middle; padding: 1rem 0.5rem; background: white;
+            border-bottom: 1px solid #eef2f6; font-size: 0.9rem; white-space: nowrap;
+        }
+        .table tbody tr:hover td { background-color: #f5f9ff; }
+
+        /* delete button only */
+        .btn-group-sm .btn {
+            padding: 4px 12px; font-size: 0.8rem; border-radius: 30px;
+        }
+        .btn-outline-danger {
+            border-color: #dc3545; color: #dc3545;
+        }
+        .btn-outline-danger:hover { background: #dc3545; color: white; }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: #6c7a8a; }
+        .empty-state i { font-size: 3.5rem; color: #a0b3cc; margin-bottom: 1rem; }
+
+        .card-footer-custom {
+            background: #f8fafd; padding: 1rem 1.8rem; color: #4b5565;
+            border-top: 1px solid #dbeafe; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        @media (max-width: 768px) {
+            .card-header-custom { flex-direction: column; align-items: start; gap: 15px; }
+            .close-btn { width: 45px; height: 45px; font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <button class="close-btn" onclick="window.location.href='/mainpage'" title="Close">
+        <i class="fas fa-times"></i>
+    </button>
+
+    <div class="container">
+        <div class="admissions-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-list-alt"></i> All Admission Records</h3>
+                <a th:href="@{/admission}" class="btn-add">
+                    <i class="fas fa-plus-circle"></i> New Admission
+                </a>
+            </div>
+
+            <div class="px-4 pt-4">
+                <div th:if="${msg}" class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle me-2"></i> <span th:text="${msg}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${err}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${err}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th> NO</th>
+                            <th> Student ID</th>
+                            <th> Full Name</th>
+                            <th> DOB</th>
+                            <th> Gender</th>
+                            <th> Blood</th>
+                            <th> Email</th>
+                            <th> Mobile</th>
+                            <th> Address</th>
+                            <th> Course</th>
+                            <th> Department</th>
+                            <th> Aced. Year</th>
+                            <th> Semester</th>
+                            <th> Section</th>
+                            <th> Roll No</th>
+                            <th> Prev College</th>
+                            <th> Adm. Date</th>
+                            <th> Adm. Type</th>
+                            <th> Accommodation</th>
+                            <th> Father Name</th>
+                            <th> Mother Name</th>
+                            <th> Parent Mobile</th>
+                            <th> Parent Occ.</th>
+                            <th> Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="adm, stat : ${admissions}">
+                            <td th:text="${stat.count}">1</td>
+                            <td th:text="${adm.id}">STU001</td>
+                            <td th:text="${adm.name + ' ' + adm.lname}">John Doe</td>
+                            <td th:text="${adm.dob}">2000-01-01</td>
+                            <td th:text="${adm.gender}">Male</td>
+                            <td th:text="${adm.blood}">O+</td>
+                            <td th:text="${adm.email}">john@example.com</td>
+                            <td th:text="${adm.mobile}">9876543210</td>
+                            <td th:text="${adm.address}">123 Street</td>
+                            <td th:text="${adm.course}">B.E. CSE</td>
+                            <td th:text="${adm.dep}">CSE</td>
+                            <td th:text="${adm.ayear}">2025-26</td>
+                            <td th:text="${adm.sem}">3</td>
+                            <td th:text="${adm.section}">A</td>
+                            <td th:text="${adm.rnumber}">2025001</td>
+                            <td th:text="${adm.pcollege}">ABC School</td>
+                            <td th:text="${adm.date}">2026-02-15</td>
+                            <td th:text="${adm.atype}">Regular</td>
+                            <td th:text="${adm.accommodation}">Hostel</td>
+                            <td th:text="${adm.fname}">Robert Doe</td>
+                            <td th:text="${adm.mname}">Jane Doe</td>
+                            <td th:text="${adm.ph}">9876543210</td>
+                            <td th:text="${adm.work}">Teacher</td>
+                            <td>
+                                <a th:href="@{/admission/delete/{id}(id=${adm.id})}" 
+                                   class="btn btn-outline-danger btn-sm" title="Delete">
+                                    <i class="fas fa-trash-alt"></i> 
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(admissions)}">
+                            <td colspan="24" class="empty-state">
+                                <i class="fas fa-inbox"></i><br>
+                                No admission records found.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer-custom">
+                <i class="fas fa-clock" style="color: #3b82f6;"></i> Last updated: 
+                <span th:text="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(alert => {
+                bootstrap.Alert.getOrCreateInstance(alert).close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

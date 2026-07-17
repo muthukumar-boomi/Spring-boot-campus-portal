@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS College - Exam Results</title>
+    <link rel="icon" type="image/png" th:href="@{/img/icons8-college-30.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh;
+            background-image: url('../img/list4.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.03'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40z'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none; z-index: 0;
+        }
+        .close-btn {
+            position: fixed; top: 20px; right: 20px;
+            background: rgba(0,0,0,0.7); color: white; border: none;
+            border-radius: 50%; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; cursor: pointer; z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .close-btn:hover { background: rgba(0,0,0,0.9); transform: scale(1.1); }
+        .container { position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; }
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px); border-radius: 32px;
+            box-shadow: 0 30px 60px -10px rgba(0,20,40,0.3), 0 10px 25px -8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.5); overflow: hidden;
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, #1e3c72, #2a5298); color: white;
+            padding: 1.2rem 1.8rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .card-header-custom h3 {
+            margin: 0; font-weight: 600; font-size: 1.8rem;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .card-header-custom h3 i {
+            font-size: 2rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 50%;
+        }
+        .btn-add {
+            background: white; color: #1e3c72; border-radius: 50px; padding: 10px 25px;
+            font-weight: 600; display: flex; align-items: center; gap: 10px;
+            transition: all 0.3s; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
+        }
+        .btn-add:hover { background: #f0f4ff; transform: translateY(-2px); color: #0f2b4f; }
+
+        .table-responsive { overflow-x: auto; }
+        .table {
+            margin-bottom: 0;
+            min-width: 1000px;
+        }
+        .table thead th {
+            background: #f8fafd; color: #1e3c72; font-weight: 600; font-size: 0.8rem;
+            text-transform: uppercase; border-bottom: 2px solid #dbeafe;
+            padding: 12px 8px; vertical-align: middle; text-align: center;
+            white-space: nowrap;
+        }
+        .table thead th i { margin-right: 5px; color: #3b82f6; }
+        .table tbody td {
+            vertical-align: middle; padding: 10px 8px; background: white;
+            border-bottom: 1px solid #eef2f6; font-size: 0.85rem;
+            text-align: center;
+        }
+        .table tbody tr:hover td { background-color: #f5f9ff; }
+
+        /* Column widths */
+        .table th:nth-child(1) { width: 3%; }
+        .table th:nth-child(2) { width: 8%; }
+        .table th:nth-child(3) { width: 10%; }
+        .table th:nth-child(4) { width: 8%; }
+        .table th:nth-child(5) { width: 10%; }
+        .table th:nth-child(6) { width: 8%; }
+        .table th:nth-child(7) { width: 8%; }
+        .table th:nth-child(8) { width: 5%; }
+        .table th:nth-child(9) { width: 7%; }
+        .table th:nth-child(10) { width: 8%; }
+        .table th:nth-child(11) { width: 6%; }
+        .table th:nth-child(12) { width: 8%; }
+        .table th:nth-child(13) { width: 10%; }
+
+        .badge-grade {
+            background: #6c757d; color: white; padding: 4px 10px; border-radius: 30px;
+            font-weight: 600; font-size: 0.75rem; display: inline-block;
+        }
+        .badge-pass {
+            background: linear-gradient(145deg, #28a745, #20c997); color: white;
+            padding: 4px 10px; border-radius: 30px; font-weight: 600; font-size: 0.75rem;
+        }
+        .badge-fail {
+            background: linear-gradient(145deg, #dc3545, #e4606d); color: white;
+            padding: 4px 10px; border-radius: 30px; font-weight: 600; font-size: 0.75rem;
+        }
+        .badge-secondary {
+            background: #6c757d; color: white; padding: 4px 10px; border-radius: 30px;
+            font-weight: 600; font-size: 0.75rem;
+        }
+
+        .btn-group-sm .btn {
+            padding: 5px 10px; font-size: 0.75rem; border-radius: 30px;
+        }
+        .btn-outline-primary { border-color: #2a5298; color: #2a5298; }
+        .btn-outline-primary:hover { background: #2a5298; color: white; }
+        .btn-outline-danger { border-color: #dc3545; color: #dc3545; }
+        .btn-outline-danger:hover { background: #dc3545; color: white; }
+
+        .card-footer-custom {
+            background: #f8fafd; padding: 0.8rem 1.8rem; color: #4b5565;
+            border-top: 1px solid #dbeafe; display: flex; justify-content: center; align-items: center; gap: 8px;
+            font-size: 0.85rem;
+        }
+        .empty-state { text-align: center; padding: 2rem; color: #6c7a8a; }
+        .empty-state i { font-size: 2.5rem; color: #a0b3cc; }
+
+        @media (max-width: 768px) {
+            .card-header-custom { flex-direction: column; align-items: start; gap: 15px; }
+            .close-btn { width: 45px; height: 45px; font-size: 1.3rem; }
+            .table, .table thead, .table tbody, .table th, .table td, .table tr { display: block; }
+            .table thead { display: none; }
+            .table tbody tr {
+                margin-bottom: 1rem; border: 1px solid #dee2e6; border-radius: 10px; padding: 8px;
+                background: white;
+            }
+            .table tbody td {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 8px 10px; border: none; border-bottom: 1px solid #eee;
+                text-align: left;
+            }
+            .table tbody td:before {
+                content: attr(data-label); font-weight: 600; color: #2a5298; width: 45%;
+            }
+            .table tbody td:last-child { border-bottom: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="close-btn" onclick="window.location.href='/mainpage'" title="Close">
+        <i class="fas fa-times"></i>
+    </button>
+
+    <div class="container">
+        <div class="results-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-clipboard-list"></i> Exam Records</h3>
+                <a th:href="@{/exam_result}" class="btn-add">
+                    <i class="fas fa-plus-circle"></i> Add New Exam
+                </a>
+            </div>
+
+            <div class="px-4 pt-4">
+                <div th:if="${msg}" class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle me-2"></i> <span th:text="${msg}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${err}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${err}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="examTable">
+                    <thead>
+                        <tr>
+                            <th>NO</th>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Exam Type</th>
+                            <th>Subject</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Section</th>
+                            <th>Total Marks</th>
+                            <th>Obtained Marks</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="exam, stat : ${examResults}">
+                            <td data-label="#" th:text="${stat.count}">1</td>
+                            <td data-label="Student ID" th:text="${exam.id}">EX2602129</td>
+                            <td data-label="Name" th:text="${exam.name}">kaviya m</td>
+                            <td data-label="Exam Type" th:text="${exam.etype}">Practical</td>
+                            <td data-label="Subject" th:text="${exam.subject}">Microprocessors</td>
+                            <td data-label="Date" th:text="${exam.date}">2026-03-19</td>
+                            <!-- Store raw time in data attribute for JS formatting -->
+                            <td data-label="Time" class="time-cell" th:data-rawtime="${exam.time}">
+                                <span th:text="${exam.time}">23:22</span>
+                            </td>
+                            <td data-label="Section" th:text="${exam.section}">C</td>
+                            <td data-label="Total Marks" th:text="${exam.tmark}">70</td>
+                            <td data-label="Obtained Marks" th:text="${exam.mark}">60</td>
+                            <td data-label="Grade"><span class="badge-grade" th:text="${exam.grade}">A</span></td>
+                            <td data-label="Status">
+                                <span th:if="${exam.status == 'Completed'}" class="badge-pass">Complete</span>
+                                <span th:if="${exam.status == 'Pending'}" class="badge-secondary">Pending ⏳</span>
+                                <span th:if="${exam.status == 'Absent'}" class="badge-fail">Absent ❌</span>
+                                <span th:if="${exam.status != 'Completed' and exam.status != 'Pending' and exam.status != 'Absent'}" 
+                                      class="badge-secondary" th:text="${exam.status}">-</span>
+                            </td>
+                            <td data-label="Actions">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/exam_result/edit/{id}(id=${exam.id})}" class="btn btn-outline-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a th:href="@{/exam_result/delete/{id}(id=${exam.id})}" class="btn btn-outline-danger" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(examResults)}">
+                            <td colspan="13" class="empty-state"><i class="fas fa-inbox"></i><br>No exam results found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer-custom">
+                <i class="fas fa-clock"></i> Last updated: 
+                <span th:text="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Convert 24-hour time strings (e.g., "23:22") to 12-hour format with AM/PM
+        function convertTo12Hour(timeStr) {
+            if (!timeStr || timeStr.trim() === '') return '—';
+            var parts = timeStr.split(':');
+            if (parts.length < 2) return timeStr;
+            var hour = parseInt(parts[0], 10);
+            var minute = parts[1];
+            var ampm = hour >= 12 ? 'PM' : 'AM';
+            var hour12 = hour % 12;
+            if (hour12 === 0) hour12 = 12;
+            return hour12 + ':' + minute + ' ' + ampm;
+        }
+
+        // Apply conversion to all time cells
+        document.querySelectorAll('.time-cell').forEach(function(cell) {
+            var rawTime = cell.getAttribute('data-rawtime');
+            if (rawTime) {
+                var formatted = convertTo12Hour(rawTime);
+                cell.innerHTML = formatted;
+            }
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                bootstrap.Alert.getOrCreateInstance(alert).close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
